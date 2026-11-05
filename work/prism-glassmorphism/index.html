@@ -1,1 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#090b18" />
+<meta name="description" content="A living glassmorphism interface with luminous gradients, floating glass panels, and responsive interactions." />
+<title>Prism — Living Glass Interface</title>
+<style>
+  :root {
+    --bg: #080a16;
+    --text: #f5f6ff;
+    --muted: #a7abc5;
+    --line: rgba(255,255,255,.14);
+    --glass: rgba(255,255,255,.075);
+    --glass-strong: rgba(255,255,255,.12);
+    --purple: #a78bfa;
+    --cyan: #69e5f7;
+    --pink: #ff8fcf;
+    --radius: 24px;
+    --mx: 50%;
+    --my: 30%;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; min-height: 100vh; overflow-x: hidden;
+    color: var(--text); background:
+      radial-gradient(ellipse at 15% 0%, rgba(85,75,190,.19), transparent 42%),
+      radial-gradient(ellipse at 95% 45%, rgba(22,161,188,.12), transparent 38%), var(--bg);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mx) var(--my), rgba(132,105,255,.09), transparent 65%);
+  }
+  a { color: inherit; text-decoration: none; }
+  button { color: inherit; font: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+  .ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+  .orb { position: absolute; width: 35rem; aspect-ratio: 1; border-radius: 50%; filter: blur(80px); opacity: .18; mix-blend-mode: screen; animation: drift 18s ease-in-out infinite alternate; }
+  .orb.one { background: #8a5cf6; top: -18rem; left: -9rem; }
+  .orb.two { background: #19d4e7; top: 35%; right: -20rem; animation-delay: -6s; animation-duration: 22s; }
+  .orb.three { background: #ff72bc; bottom: -23rem; left: 32%; animation-delay: -10s; animation-duration: 24s; }
+  @keyframes drift { from { transform: translate3d(-2%, -1%, 0) scale(.92); } to { transform: translate3d(7%, 6%, 0) scale(1.12); } }
+  .shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+  .glass {
+    background: linear-gradient(135deg, rgba(255,255,255,.105), rgba(255,255,255,.035));
+    border: 1px solid var(--line); box-shadow: 0 18px 60px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.1);
+    backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%);
+  }
+  .topbar { position: sticky; top: 14px; z-index: 20; padding-top: 14px; }
+  .nav {
+    min-height: 68px; border-radius: 20px; padding: 10px 14px 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.04em; font-size: 1.15rem; }
+  .brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 11px; background: linear-gradient(135deg, #c6b5ff, #6ce7f4 70%, #fff); color: #101324; box-shadow: 0 0 24px rgba(128,157,255,.35); }
+  .nav-links { display: flex; align-items: center; gap: 6px; }
+  .nav-links a { padding: 10px 14px; border-radius: 12px; color: var(--muted); font-size: .9rem; transition: color .25s, background .25s; }
+  .nav-links a:hover, .nav-links a.active { color: white; background: rgba(255,255,255,.08); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .icon-btn, .menu-toggle { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.055); cursor: pointer; transition: .25s; }
+  .icon-btn:hover, .menu-toggle:hover { background: rgba(255,255,255,.14); transform: translateY(-2px); }
+  .menu-toggle { display: none; }
+  .btn { display: inline-flex; justify-content: center; align-items: center; gap: 9px; border: 1px solid transparent; padding: 12px 18px; border-radius: 14px; cursor: pointer; font-weight: 650; font-size: .92rem; transition: transform .25s, box-shadow .25s, background .25s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { color: #111426; background: linear-gradient(110deg, #d2c5ff, #8debf4); box-shadow: 0 8px 30px rgba(113,196,255,.17); }
+  .btn-primary:hover { box-shadow: 0 12px 36px rgba(113,196,255,.3); }
+  .btn-quiet { border-color: var(--line); background: rgba(255,255,255,.055); }
+  .btn-quiet:hover { background: rgba(255,255,255,.11); }
+  .hero { padding: 100px 0 70px; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 52px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 9px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.055); padding: 8px 12px; border-radius: 999px; color: #d9d8f4; font-size: .78rem; letter-spacing: .07em; text-transform: uppercase; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #83f4ce; box-shadow: 0 0 13px #83f4ce; }
+  h1 { margin: 23px 0 20px; font-size: clamp(3.2rem, 6.4vw, 5.9rem); line-height: .99; letter-spacing: -.075em; font-weight: 730; }
+  .gradient-text { color: transparent; background: linear-gradient(100deg, #e6dcff 8%, #a8a5ff 43%, #8aebf4 82%); background-clip: text; -webkit-background-clip: text; }
+  .hero-copy { max-width: 520px; color: var(--muted); font-size: 1.07rem; line-height: 1.8; }
+  .hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 29px; }
+  .proof { display: flex; align-items: center; gap: 14px; margin-top: 35px; color: var(--muted); font-size: .82rem; }
+  .avatars { display: flex; padding-left: 3px; }
+  .avatar { width: 29px; height: 29px; border-radius: 50%; border: 2px solid #121425; margin-left: -4px; display: grid; place-items: center; font-size: .7rem; font-weight: 800; color: #15162a; background: linear-gradient(140deg,#f8d1c8,#b4b8ff); }
+  .avatar:nth-child(2) { background: linear-gradient(140deg,#c5f4e8,#9eafff); }
+  .avatar:nth-child(3) { background: linear-gradient(140deg,#ffcf9b,#f3a8e5); }
+  .hero-visual { min-height: 480px; position: relative; display: grid; place-items: center; perspective: 1000px; }
+  .halo { position: absolute; width: 340px; height: 340px; border-radius: 50%; border: 1px solid rgba(190,185,255,.17); box-shadow: 0 0 100px rgba(134,114,255,.13), inset 0 0 80px rgba(103,225,255,.08); animation: halo 12s linear infinite; }
+  .halo::before, .halo::after { content: ""; position: absolute; inset: 24px; border: 1px solid rgba(255,255,255,.1); border-radius: 50%; transform: rotateX(67deg) rotateY(20deg); }
+  .halo::after { inset: -25px; transform: rotateX(70deg) rotateY(-30deg); border-color: rgba(111,222,242,.13); }
+  @keyframes halo { to { transform: rotate(360deg); } }
+  .dashboard { position: relative; width: min(100%, 440px); border-radius: 28px; padding: 22px; transform: rotateY(-8deg) rotateX(4deg); transition: transform .5s cubic-bezier(.2,.8,.2,1); animation: float 7s ease-in-out infinite; }
+  .dashboard:hover { transform: rotateY(0) rotateX(0) translateY(-5px); }
+  @keyframes float { 0%,100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+  .dash-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .dash-label { color: var(--muted); font-size: .78rem; }
+  .dash-title { font-weight: 700; font-size: 1.03rem; margin-top: 3px; }
+  .tiny-icon { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: rgba(255,255,255,.09); border: 1px solid var(--line); }
+  .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .metric { padding: 15px; border-radius: 17px; background: rgba(5,8,25,.25); border: 1px solid rgba(255,255,255,.09); }
+  .metric .value { font-size: 1.55rem; letter-spacing: -.05em; font-weight: 700; margin-top: 6px; }
+  .positive { color: #8df0d2; font-size: .75rem; }
+  .chart-card { border-radius: 18px; padding: 17px 15px 10px; background: rgba(6,9,25,.22); border: 1px solid rgba(255,255,255,.09); }
+  .chart-head { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); }
+  .chart-head strong { color: var(--text); font-weight: 650; }
+  .chart { height: 112px; margin-top: 9px; position: relative; overflow: hidden; }
+  .chart svg { width: 100%; height: 100%; overflow: visible; }
+  .chart-line { stroke-dasharray: 500; stroke-dashoffset: 500; animation: draw 2.3s .3s ease forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .float-card { position: absolute; border-radius: 18px; padding: 13px 16px; display: flex; align-items: center; gap: 11px; box-shadow: 0 15px 35px rgba(0,0,0,.2); animation: float 6s ease-in-out infinite; }
+  .float-card.left { left: -8px; bottom: 65px; animation-delay: -2s; }
+  .float-card.right { right: -10px; top: 62px; animation-delay: -4s; }
+  .float-symbol { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: linear-gradient(135deg,rgba(180,157,255,.45),rgba(94,224,244,.2)); }
+  .float-card small { color: var(--muted); display: block; font-size: .7rem; }
+  .float-card strong { font-size: .87rem; display: block; margin-top: 2px; }
+  .section { padding: 55px 0 75px; }
+  .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 27px; }
+  .section-heading h2 { font-size: clamp(1.8rem,3.3vw,2.65rem); letter-spacing: -.055em; line-height: 1.1; margin: 12px 0 0; }
+  .section-heading p { color: var(--muted); max-width: 380px; margin: 0; font-size: .93rem; }
+  .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .feature { position: relative; overflow: hidden; padding: 24px; border-radius: var(--radius); min-height: 225px; transition: transform .35s, border-color .35s, background .35s; cursor: pointer; }
+  .feature::after { content: ""; position: absolute; width: 170px; height: 170px; right: -85px; bottom: -105px; background: var(--glow,rgba(144,128,255,.28)); filter: blur(35px); border-radius: 50%; transition: transform .4s; }
+  .feature:hover { transform: translateY(-6px); border-color: rgba(195,192,255,.36); background: linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); }
+  .feature:hover::after { transform: scale(1.6); }
+  .feature-icon { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,255,255,.08); border: 1px solid var(--line); font-size: 1.25rem; }
+  .feature h3 { margin: 23px 0 8px; font-size: 1.12rem; letter-spacing: -.025em; }
+  .feature p { color: var(--muted); font-size: .9rem; margin: 0; max-width: 290px; }
+  .showcase { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; }
+  .showcase-copy, .showcase-art { border-radius: 28px; min-height: 320px; padding: 30px; overflow: hidden; position: relative; }
+  .showcase-copy h2 { font-size: clamp(2rem,4vw,3.2rem); letter-spacing: -.065em; line-height: 1.04; margin: 20px 0 15px; max-width: 370px; }
+  .showcase-copy p { color: var(--muted); max-width: 370px; }
+  .showcase-copy .btn { margin-top: 12px; }
+  .showcase-art { display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 50%,rgba(112,119,255,.22),transparent 62%), linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.025)); }
+  .glass-stack { width: min(100%,430px); height: 235px; position: relative; transform: rotate(-5deg); }
+  .stack-panel { position: absolute; border-radius: 22px; border: 1px solid rgba(255,255,255,.23); backdrop-filter: blur(14px); box-shadow: 0 20px 45px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.18); }
+  .stack-panel.back { inset: 15px 65px 22px 15px; transform: rotate(-12deg); background: linear-gradient(130deg,rgba(158,136,255,.24),rgba(79,217,236,.06)); }
+  .stack-panel.mid { inset: 0 25px 8px 45px; transform: rotate(7deg); background: linear-gradient(130deg,rgba(255,255,255,.16),rgba(255,255,255,.035)); }
+  .stack-panel.front { inset: 35px 0 0 20px; padding: 19px; background: linear-gradient(130deg,rgba(255,255,255,.19),rgba(255,255,255,.06)); transform: rotate(-1deg); }
+  .stack-top { display: flex; justify-content: space-between; align-items: center; }
+  .stack-dots { display: flex; gap: 5px; }
+  .stack-dots i { width: 6px; height: 6px; background: rgba(255,255,255,.65); border-radius: 50%; }
+  .stack-line { height: 7px; border-radius: 9px; background: rgba(255,255,255,.14); margin-top: 15px; width: 70%; }
+  .stack-line.short { width: 42%; margin-top: 8px; }
+  .stack-bars { display: flex; align-items: end; gap: 8px; height: 65px; margin-top: 12px; }
+  .stack-bars span { flex: 1; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg,rgba(137,233,244,.85),rgba(165,139,255,.28)); }
+  .stack-bars span:nth-child(1){height:35%}.stack-bars span:nth-child(2){height:58%}.stack-bars span:nth-child(3){height:45%}.stack-bars span:nth-child(4){height:80%}.stack-bars span:nth-child(5){height:65%}.stack-bars span:nth-child(6){height:100%}.stack-bars span:nth-child(7){height:74%}
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 18px; }
+  .stat { padding: 22px; border-radius: 20px; }
+  .stat strong { display: block; font-size: 2rem; letter-spacing: -.06em; }
+  .stat span { color: var(--muted); font-size: .85rem; }
+  .cta { text-align: center; padding: 64px 24px; border-radius: 30px; position: relative; overflow: hidden; margin: 30px 0 75px; }
+  .cta::before { content: ""; position: absolute; width: 400px; height: 250px; top: -180px; left: calc(50% - 200px); background: rgba(145,127,255,.28); filter: blur(55px); border-radius: 50%; }
+  .cta h2 { position: relative; font-size: clamp(2rem,4.8vw,3.8rem); letter-spacing: -.065em; line-height: 1.05; margin: 0 auto 16px; max-width: 700px; }
+  .cta p { color: var(--muted); margin: 0 auto 25px; max-width: 500px; }
+  footer { padding: 25px 0 35px; border-top: 1px solid rgba(255,255,255,.09); color: var(--muted); font-size: .82rem; }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a:hover { color: white; }
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%,20px); opacity: 0; pointer-events: none; z-index: 50; padding: 12px 18px; border-radius: 14px; background: rgba(19,22,42,.9); border: 1px solid var(--line); backdrop-filter: blur(20px); box-shadow: 0 10px 35px rgba(0,0,0,.3); transition: .3s; font-size: .9rem; }
+  .toast.show { opacity: 1; transform: translate(-50%,0); }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 15px; padding-top: 75px; }
+    .hero-copy { max-width: 650px; }
+    .hero-visual { min-height: 450px; }
+    .dashboard { width: min(100%,470px); }
+    .feature-grid { grid-template-columns: repeat(2,1fr); }
+    .showcase { grid-template-columns: 1fr; }
+    .showcase-copy, .showcase-art { min-height: 280px; }
+  }
+  @media (max-width: 650px) {
+    .shell { width: min(100% - 28px, 1160px); }
+    .nav { padding-left: 13px; }
+    .nav-actions .btn { display: none; }
+    .menu-toggle { display: grid; }
+    .nav-links { display: none; position: absolute; top: 84px; left: 0; right: 0; padding: 10px; border-radius: 18px; flex-direction: column; align-items: stretch; background: rgba(13,15,32,.92); border: 1px solid var(--line); backdrop-filter: blur(24px); box-shadow: 0 18px 45px rgba(0,0,0,.3); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 13px 14px; }
+    .hero { padding: 66px 0 40px; }
+    h1 { font-size: clamp(3rem,14vw,4.7rem); }
+    .hero-visual { min-height: 385px; margin: 8px -3px 0; }
+    .dashboard { padding: 16px; transform: none; }
+    .halo { width: 270px; height: 270px; }
+    .float-card { padding: 10px; }
+    .float-card.left { left: -2px; bottom: 20px; }
+    .float-card.right { right: -2px; top: 20px; }
+    .section { padding: 40px 0 50px; }
+    .section-heading { align-items: start; flex-direction: column; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .feature { min-height: 190px; }
+    .stats { grid-template-columns: 1fr; }
+    .stat { padding: 18px 20px; }
+    .showcase-copy, .showcase-art { padding: 22px; }
+    .glass-stack { transform: scale(.87) rotate(-5deg); }
+    .cta { padding: 48px 20px; margin-bottom: 50px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="orb one"></div><div class="orb two"></div><div class="orb three"></div></div>
 
+<header class="topbar shell">
+  <nav class="nav glass" aria-label="Main navigation">
+    <a class="brand" href="#home" aria-label="Prism home"><span class="brand-mark">✦</span><span>prism<span style="color:#a9eaf4">.</span></span></a>
+    <div class="nav-links" id="navLinks">
+      <a class="active" href="#home">Overview</a><a href="#features">Features</a><a href="#experience">Experience</a><a href="#about">About</a>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle ambient glow" title="Toggle ambient glow">☼</button>
+      <a class="btn btn-primary" href="#get-started">Explore Prism <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+</header>
+
+<main id="home">
+  <section class="hero shell">
+    <div class="hero-content reveal">
+      <div class="eyebrow"><span class="live-dot"></span> A new dimension of digital</div>
+      <h1>Interfaces that<br><span class="gradient-text">feel alive.</span></h1>
+      <p class="hero-copy">Meet a calmer kind of digital experience. Translucent layers, living gradients, and thoughtful motion come together in a space that feels as fluid as it looks.</p>
+      <div class="hero-buttons"><a class="btn btn-primary" href="#features">Discover the system <span aria-hidden="true">↗</span></a><a class="btn btn-quiet" href="#experience"><span aria-hidden="true">▷</span> See the experience</a></div>
+      <div class="proof"><div class="avatars" aria-hidden="true"><span class="avatar">A</span><span class="avatar">M</span><span class="avatar">J</span></div><span>Designed for clarity. Made for curiosity.</span></div>
+    </div>
+    <div class="hero-visual reveal" aria-label="Interactive preview of a glass dashboard">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="dashboard glass" id="dashboard">
+        <div class="dash-top"><div><div class="dash-label">YOUR CREATIVE SPACE</div><div class="dash-title">Atmosphere overview</div></div><div class="tiny-icon" aria-hidden="true">✧</div></div>
+        <div class="metric-row">
+          <div class="metric"><div class="dash-label">Focus score</div><div class="value">94.8<span style="font-size:.8rem;color:#b4b7d2">%</span></div><div class="positive">↗ 12.6% this week</div></div>
+          <div class="metric"><div class="dash-label">Flow state</div><div class="value">4.2<span style="font-size:.8rem;color:#b4b7d2">h</span></div><div class="positive">● In your element</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><span>Activity rhythm</span><strong>Last 7 days⌄</strong></div>
+          <div class="chart">
+            <svg viewBox="0 0 360 112" role="img" aria-label="A rising activity line chart">
+              <defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a99aff" stop-opacity=".35"/><stop offset="1" stop-color="#a99aff" stop-opacity="0"/></linearGradient><linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#bca8ff"/><stop offset="1" stop-color="#70e9f2"/></linearGradient></defs>
+              <g stroke="rgba(255,255,255,.08)" stroke-width="1"><path d="M0 20H360M0 48H360M0 76H360M0 104H360"/></g>
+              <path d="M0 88 C22 85 28 67 49 72 S78 89 101 62 S136 67 155 47 S186 58 206 35 S244 53 263 29 S300 45 319 18 S342 28 360 10 L360 112 L0 112Z" fill="url(#area)"/>
+              <path class="chart-line" d="M0 88 C22 85 28 67 49 72 S78 89 101 62 S136 67 155 47 S186 58 206 35 S244 53 263 29 S300 45 319 18 S342 28 360 10" fill="none" stroke="url(#line)" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="319" cy="18" r="4" fill="#a5f3fc" stroke="#101426" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="float-card left glass"><span class="float-symbol">✧</span><div><small>Creative energy</small><strong>Peak performance</strong></div></div>
+      <div class="float-card right glass"><span class="float-symbol">↗</span><div><small>Momentum</small><strong>+28.4%</strong></div></div>
+    </div>
+  </section>
+
+  <section class="section shell" id="features">
+    <div class="section-heading reveal"><div><div class="eyebrow">Built to feel different</div><h2>Soft surfaces.<br><span class="gradient-text">Serious substance.</span></h2></div><p>Every detail has a purpose. Explore the building blocks of a living interface, designed to feel premium without getting in the way.</p></div>
+    <div class="feature-grid">
+      <article class="feature glass reveal" tabindex="0" role="button" aria-expanded="false" style="--glow:rgba(152,124,255,.4)"><div class="feature-icon">◈</div><h3>Layered glass</h3><p>Depth, blur, and subtle reflections create a tactile sense of space.</p></article>
+      <article class="feature glass reveal" tabindex="0" role="button" aria-expanded="false" style="--glow:rgba(76,222,241,.35)"><div class="feature-icon">〰</div><h3>Living atmosphere</h3><p>Slow-moving color fields bring the background to life without stealing focus.</p></article>
+      <article class="feature glass reveal" tabindex="0" role="button" aria-expanded="false" style="--glow:rgba(255,119,196,.3)"><div class="feature-icon">✧</div><h3>Intentional motion</h3><p>Responsive transitions reward interaction and help every change feel natural.</p></article>
+    </div>
+  </section>
+
+  <section class="section shell" id="experience">
+    <div class="showcase">
+      <div class="showcase-copy glass reveal">
+        <div class="eyebrow"><span class="live-dot"></span> Designed in layers</div>
+        <h2>A little depth goes a <span class="gradient-text">long way.</span></h2>
+        <p>Glass is more than blur. It is contrast, hierarchy, and restraint—so the important things always stay in focus.</p>
+        <a class="btn btn-quiet" href="#get-started">Feel the difference <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="showcase-art glass reveal" aria-label="Illustration of layered translucent dashboard cards">
+        <div class="glass-stack" aria-hidden="true">
+          <div class="stack-panel back"></div><div class="stack-panel mid"></div>
+          <div class="stack-panel front"><div class="stack-top"><strong>Space / 01</strong><div class="stack-dots"><i></i><i></i><i></i></div></div><div class="stack-line"></div><div class="stack-line short"></div><div class="stack-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="stats reveal" id="about">
+      <div class="stat glass"><strong class="counter" data-target="24">0</strong><span>px of considered blur</span></div>
+      <div class="stat glass"><strong><span class="counter" data-target="60">0</span>fps*</strong><span>Fluid motion, where supported</span></div>
+      <div class="stat glass"><strong class="counter" data-target="100">0</strong><span>% responsive layout</span></div>
+    </div>
+  </section>
+
+  <section class="shell" id="get-started">
+    <div class="cta glass reveal">
+      <div class="eyebrow"><span class="live-dot"></span> Your next interface starts here</div>
+      <h2>Make room for a little <span class="gradient-text">wonder.</span></h2>
+      <p>Bring clarity, depth, and a living sense of atmosphere to your next digital experience.</p>
+      <button class="btn btn-primary" id="startBtn">Let’s make something <span aria-hidden="true">↗</span></button>
+    </div>
+  </section>
+</main>
+
+<footer><div class="shell footer-inner"><a class="brand" href="#home"><span class="brand-mark">✦</span><span>prism<span style="color:#a9eaf4">.</span></span></a><span>© <span id="year"></span> Prism Studio. Made with intention.</span><div class="footer-links"><a href="#features">Features</a><a href="#experience">Experience</a><a href="#home">Back to top ↑</a></div></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite">You're all set. Let's make something great.</div>
+
+<script>
+(() => {
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+  // Pointer-following ambient glow (kept subtle and disabled for touch-first devices).
+  if (window.matchMedia('(pointer: fine)').matches) {
+    window.addEventListener('pointermove', event => {
+      document.body.style.setProperty('--mx', `${event.clientX}px`);
+      document.body.style.setProperty('--my', `${event.clientY}px`);
+    }, { passive: true });
+  }
+
+  // Responsive navigation.
+  const menuToggle = $('#menuToggle');
+  const navLinks = $('#navLinks');
+  menuToggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    menuToggle.textContent = open ? '✕' : '☰';
+  });
+  $$('#navLinks a').forEach(link => link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.textContent = '☰';
+    $$('#navLinks a').forEach(item => item.classList.toggle('active', item === link));
+  }));
+
+  // Ambient glow toggle.
+  let glowOn = true;
+  $('#themeBtn').addEventListener('click', () => {
+    glowOn = !glowOn;
+    $$('.orb').forEach(orb => orb.style.opacity = glowOn ? '.18' : '0');
+    document.body.style.background = glowOn
+      ? 'radial-gradient(ellipse at 15% 0%, rgba(85,75,190,.19), transparent 42%), radial-gradient(ellipse at 95% 45%, rgba(22,161,188,.12), transparent 38%), var(--bg)'
+      : 'var(--bg)';
+    $('#themeBtn').setAttribute('aria-pressed', String(!glowOn));
+    $('#themeBtn').title = glowOn ? 'Turn ambient glow off' : 'Turn ambient glow on';
+  });
+
+  // Reveal sections as they enter the viewport.
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .12 });
+  $$('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Expandable feature cards: click, Enter, or Space.
+  $$('.feature').forEach(card => {
+    const toggle = () => {
+      const expanded = card.classList.toggle('expanded');
+      card.setAttribute('aria-expanded', String(expanded));
+      card.style.minHeight = expanded ? '255px' : '';
+      const paragraph = $('p', card);
+      paragraph.style.color = expanded ? '#e1e5ff' : '';
+      paragraph.style.maxWidth = expanded ? '100%' : '';
+      paragraph.style.transform = expanded ? 'translateY(-2px)' : '';
+      paragraph.style.transition = 'all .3s ease';
+    };
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+    });
+  });
+
+  // Dashboard tilt follows the pointer on desktop.
+  const dashboard = $('#dashboard');
+  if (window.matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
+    const visual = $('.hero-visual');
+    visual.addEventListener('pointermove', event => {
+      const rect = visual.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      dashboard.style.animation = 'none';
+      dashboard.style.transform = `rotateY(${-x * 10}deg) rotateX(${y * -7}deg) translateY(-3px)`;
+    });
+    visual.addEventListener('pointerleave', () => {
+      dashboard.style.animation = '';
+      dashboard.style.transform = '';
+    });
+  }
+
+  // Count-up stats.
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const node = entry.target, target = Number(node.dataset.target);
+      const start = performance.now(), duration = 1200;
+      const tick = now => {
+        const progress = Math.min((now - start) / duration, 1);
+        node.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3)));
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      counterObserver.unobserve(node);
+    });
+  }, { threshold: .5 });
+  $$('.counter').forEach(counter => counterObserver.observe(counter));
+
+  // Demo CTA feedback, with no external service required.
+  let toastTimer;
+  $('#startBtn').addEventListener('click', () => {
+    const toast = $('#toast');
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  });
+
+  $('#year').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
