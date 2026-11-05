@@ -1,1 +1,175 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4f3ee">
+<title>SWISS INTERNATIONAL — Design in Order</title>
+<style>
+  :root{
+    --paper:#f4f3ee;--ink:#171717;--red:#e6332a;--line:rgba(23,23,23,.22);
+    --gutter:clamp(18px,4vw,64px);--gap:clamp(12px,1.6vw,24px);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .wrap{padding-inline:var(--gutter)}
+  .topline{height:8px;background:var(--red)}
+  header{display:grid;grid-template-columns:1fr auto;align-items:center;padding:24px var(--gutter);border-bottom:1px solid var(--line);gap:20px}
+  .brand{font-size:clamp(17px,2vw,25px);font-weight:900;letter-spacing:-.07em;line-height:.9}
+  .brand span{color:var(--red)}
+  .brand small{display:block;font-size:9px;letter-spacing:.18em;margin-top:8px;font-weight:700}
+  nav{display:flex;gap:clamp(16px,3vw,44px);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+  nav a{padding:8px 0;border-bottom:2px solid transparent}
+  nav a:hover{border-color:var(--red)}
+  .menu{display:none;background:none;border:1px solid var(--ink);padding:10px 12px;font-size:11px;font-weight:800;text-transform:uppercase}
+  .hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);padding:clamp(48px,8vw,118px) var(--gutter) clamp(52px,7vw,100px);border-bottom:1px solid var(--line)}
+  .eyebrow{grid-column:1/5;font-size:11px;line-height:1.5;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .eyebrow b{display:inline-block;width:9px;height:9px;background:var(--red);margin-right:9px}
+  h1{grid-column:1/11;font-size:clamp(64px,13.4vw,196px);line-height:.78;letter-spacing:-.095em;text-transform:uppercase;margin:42px 0 32px;font-weight:900}
+  h1 span{color:var(--red)}
+  .hero-bottom{grid-column:1/13;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);align-items:end;margin-top:14px}
+  .hero-bottom p{grid-column:1/6;max-width:430px;font-size:clamp(16px,1.7vw,22px);line-height:1.35;letter-spacing:-.035em;margin:0}
+  .hero-meta{grid-column:9/13;display:flex;justify-content:space-between;align-items:end;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+  .arrow{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--ink);font-size:22px;transition:.2s}
+  .arrow:hover{background:var(--red);border-color:var(--red);color:white;transform:translate(3px,-3px)}
+  .section-head{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);align-items:start;padding:22px var(--gutter);border-bottom:1px solid var(--line)}
+  .section-head .label{grid-column:1/4;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .section-head .note{grid-column:9/13;font-size:10px;line-height:1.5;text-transform:uppercase;letter-spacing:.08em}
+  .projects{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);padding:var(--gutter);border-bottom:1px solid var(--line)}
+  .project{min-width:0;position:relative}
+  .project:nth-child(1){grid-column:1/8}
+  .project:nth-child(2){grid-column:9/13;margin-top:90px}
+  .project:nth-child(3){grid-column:2/6;margin-top:26px}
+  .project:nth-child(4){grid-column:7/13;margin-top:110px}
+  .art{position:relative;overflow:hidden;aspect-ratio:1.25;background:#deddd7;display:grid;place-items:center}
+  .art-a{background:var(--red);color:var(--paper)}
+  .art-a .bigtype{font-size:clamp(75px,15vw,220px);font-weight:900;letter-spacing:-.12em;line-height:.75;text-align:center;transform:rotate(-8deg)}
+  .art-b{background:#e1e0da}
+  .art-b .circle{width:62%;aspect-ratio:1;border:clamp(10px,2vw,28px) solid var(--red);border-radius:50%;position:relative}
+  .art-b .circle:after{content:"";position:absolute;left:50%;top:-20%;height:140%;width:2px;background:var(--ink);transform:rotate(45deg)}
+  .art-c{background:#e8e7e0;aspect-ratio:1}
+  .art-c .gridmark{width:72%;height:72%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:5px;transform:rotate(-9deg)}
+  .gridmark i{background:var(--ink)}.gridmark i:nth-child(3n){background:var(--red)}.gridmark i:nth-child(2),.gridmark i:nth-child(7),.gridmark i:nth-child(12){opacity:0}
+  .art-d{background:#d8d8d1;aspect-ratio:1.4}
+  .art-d .poster{width:75%;height:78%;background:var(--paper);padding:7%;display:flex;flex-direction:column;justify-content:space-between;transform:rotate(4deg);box-shadow:10px 12px 0 rgba(0,0,0,.12)}
+  .poster strong{font-size:clamp(28px,5vw,72px);line-height:.78;letter-spacing:-.09em}
+  .poster em{font-size:10px;letter-spacing:.12em;font-style:normal;font-weight:800}
+  .project-info{display:grid;grid-template-columns:1fr auto;gap:12px;padding-top:15px;align-items:start}
+  .project h3{font-size:clamp(17px,2vw,25px);letter-spacing:-.06em;margin:0 0 6px;font-weight:800}
+  .project p{margin:0;font-size:11px;text-transform:uppercase;letter-spacing:.06em;line-height:1.5}
+  .num{font-size:10px;font-weight:800}
+  .manifesto{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);padding:clamp(55px,9vw,130px) var(--gutter);border-bottom:1px solid var(--line)}
+  .manifesto .label{grid-column:1/4;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .manifesto h2{grid-column:4/12;font-size:clamp(34px,6.7vw,94px);line-height:.92;letter-spacing:-.085em;margin:0;text-transform:uppercase}
+  .manifesto h2 span{color:var(--red)}
+  .manifesto p{grid-column:8/12;max-width:360px;font-size:14px;line-height:1.5;margin:32px 0 0}
+  .services{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);padding:0 var(--gutter) var(--gutter);border-bottom:1px solid var(--line)}
+  .services-title{grid-column:1/4;padding-top:25px;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .service-list{grid-column:4/13}
+  .service{display:grid;grid-template-columns:42px 1fr auto;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding:22px 0}
+  .service:first-child{border-top:1px solid var(--line)}
+  .service .index{font-size:10px;font-weight:800;color:var(--red)}
+  .service h3{font-size:clamp(20px,3vw,37px);letter-spacing:-.06em;margin:0}
+  .service span:last-child{font-size:18px}
+  .contact{background:var(--red);color:var(--paper);padding:clamp(42px,7vw,92px) var(--gutter);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap)}
+  .contact .label{grid-column:1/4;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .contact h2{grid-column:1/10;font-size:clamp(52px,11vw,150px);line-height:.8;letter-spacing:-.095em;text-transform:uppercase;margin:25px 0 45px}
+  .contact-link{grid-column:1/7;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.55);padding-top:15px;font-size:clamp(17px,2.2vw,28px);font-weight:700}
+  .contact-link .arrow{border-color:var(--paper)}
+  .contact-link .arrow:hover{background:var(--paper);color:var(--red)}
+  footer{padding:20px var(--gutter);display:grid;grid-template-columns:1fr auto 1fr;gap:20px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  footer span:last-child{text-align:right}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:700px){
+    header{padding-block:18px}nav{display:none;position:absolute;z-index:5;top:70px;left:0;right:0;background:var(--paper);padding:20px var(--gutter);border-bottom:1px solid var(--line);flex-direction:column;gap:14px}nav.open{display:flex}.menu{display:block}
+    .hero{padding-top:54px}.eyebrow{grid-column:1/10}h1{grid-column:1/13;font-size:clamp(59px,17vw,120px);margin-top:45px}.hero-bottom p{grid-column:1/10}.hero-meta{grid-column:1/13;margin-top:26px}
+    .section-head .label{grid-column:1/6}.section-head .note{grid-column:7/13}
+    .projects{row-gap:38px}.project:nth-child(1){grid-column:1/13}.project:nth-child(2){grid-column:3/13;margin-top:0}.project:nth-child(3){grid-column:1/9;margin-top:0}.project:nth-child(4){grid-column:2/13;margin-top:0}
+    .manifesto .label{grid-column:1/13}.manifesto h2{grid-column:1/13;margin-top:28px}.manifesto p{grid-column:4/13;margin-top:20px}
+    .services-title{grid-column:1/13;padding-top:25px}.service-list{grid-column:1/13}.service{grid-template-columns:28px 1fr auto;gap:10px}
+    .contact .label{grid-column:1/13}.contact h2{grid-column:1/13;margin-top:45px}.contact-link{grid-column:1/12}
+    footer{grid-template-columns:1fr 1fr}footer span:nth-child(2){display:none}footer span:last-child{text-align:right}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header>
+  <a class="brand" href="#top" aria-label="Swiss International home">SWISS<span>®</span><small>INTERNATIONAL / DESIGN OFFICE</small></a>
+  <nav id="nav"><a href="#work">Selected work</a><a href="#about">Approach</a><a href="#services">Capabilities</a><a href="#contact">Contact</a></nav>
+  <button class="menu" id="menu" aria-expanded="false" aria-controls="nav">Menu +</button>
+</header>
+<main id="top">
+  <section class="hero">
+    <div class="eyebrow"><b></b>Independent design practice<br>Zurich · Working everywhere</div>
+    <h1>Less.<br>But <span>better.</span></h1>
+    <div class="hero-bottom">
+      <p>Clarity is not a style. It is a decision. We build identities, digital experiences and visual systems with purpose.</p>
+      <div class="hero-meta"><span>Form follows<br>function — 001</span><a class="arrow" href="#work" aria-label="Explore selected work">↘</a></div>
+    </div>
+  </section>
+  <div class="section-head" id="work"><div class="label">01 / Selected work</div><div class="note">A small selection<br>of considered ideas · 2024—26</div></div>
+  <section class="projects">
+    <article class="project reveal">
+      <div class="art art-a"><div class="bigtype">FORM<br>FOLLOWS<br>FORM.</div></div>
+      <div class="project-info"><div><h3>Form / Function</h3><p>Visual identity · Art direction</p></div><span class="num">01 — 04</span></div>
+    </article>
+    <article class="project reveal">
+      <div class="art art-b"><div class="circle"></div></div>
+      <div class="project-info"><div><h3>Object No. 01</h3><p>Editorial · Print system</p></div><span class="num">02 — 04</span></div>
+    </article>
+    <article class="project reveal">
+      <div class="art art-c"><div class="gridmark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="project-info"><div><h3>Grid Studies</h3><p>Typography · System design</p></div><span class="num">03 — 04</span></div>
+    </article>
+    <article class="project reveal">
+      <div class="art art-d"><div class="poster"><em>INTERNATIONAL / 026</em><strong>GOOD<br>DESIGN<br>IS CLEAR.</strong><em>LESS NOISE. MORE MEANING.</em></div></div>
+      <div class="project-info"><div><h3>Clear Signal</h3><p>Campaign · Art direction</p></div><span class="num">04 — 04</span></div>
+    </article>
+  </section>
+  <section class="manifesto" id="about">
+    <div class="label">02 / The approach</div>
+    <h2>Make it clear.<br>Make it <span>count.</span></h2>
+    <p>We believe the strongest work begins with a simple question: what matters? Then we remove the noise, establish order and make every element earn its place.</p>
+  </section>
+  <section class="services" id="services">
+    <div class="services-title">03 / What we do</div>
+    <div class="service-list">
+      <div class="service reveal"><span class="index">01</span><h3>Brand identity</h3><span>↗</span></div>
+      <div class="service reveal"><span class="index">02</span><h3>Digital experiences</h3><span>↗</span></div>
+      <div class="service reveal"><span class="index">03</span><h3>Art direction</h3><span>↗</span></div>
+      <div class="service reveal"><span class="index">04</span><h3>Editorial & typography</h3><span>↗</span></div>
+    </div>
+  </section>
+  <section class="contact" id="contact">
+    <div class="label">04 / Start a conversation</div>
+    <h2>Have a good<br>problem?</h2>
+    <a class="contact-link" href="mailto:hello@example.com"><span>Let's make it clear.</span><span class="arrow">↗</span></a>
+  </section>
+</main>
+<footer><span>© Swiss International 2026</span><span>Independent by design</span><span>Built on clarity ↗</span></footer>
+<script>
+  const menu = document.getElementById('menu');
+  const nav = document.getElementById('nav');
+  menu.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    menu.setAttribute('aria-expanded', String(open));
+    menu.textContent = open ? 'Close −' : 'Menu +';
+  });
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    nav.classList.remove('open'); menu.setAttribute('aria-expanded','false'); menu.textContent='Menu +';
+  }));
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}
+    });
+  }, {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
