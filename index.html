@@ -354,7 +354,38 @@
       .button::after { display:none; }
     }
 
-  </style></head><body><header class="header">
+  
+    /* XCLUSIVO intro 03 — controlled digital glitch */
+    .xclusivo-intro{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;overflow:hidden;background:#050505;opacity:1;visibility:visible;transition:opacity .8s ease,visibility .8s ease}
+    .xclusivo-intro.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+    .xclusivo-intro-logo{width:min(92vw,1100px);padding:40px 12px;text-align:center;user-select:none}
+    .xclusivo-glitch-word{position:relative;display:inline-block;color:#f5f5f5;font:800 clamp(2.8rem,12.2vw,9.2rem)/.95 "Montserrat",Arial,sans-serif;letter-spacing:clamp(.08em,1.05vw,.14em);white-space:nowrap;opacity:0;animation:xgWordIn .5s ease .35s forwards}
+    .xclusivo-glitch-word::before,.xclusivo-glitch-word::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none;opacity:0}
+    .xclusivo-glitch-word::before{color:#aaa;clip-path:inset(0 0 58% 0);animation:xgBefore .75s steps(2,end) .85s 2}
+    .xclusivo-glitch-word::after{color:#fff;clip-path:inset(55% 0 0 0);animation:xgAfter .65s steps(2,end) 1.05s 2}
+    .xclusivo-glitch-sub{margin-top:clamp(18px,3.2vw,34px);padding-left:.42em;color:#929292;font:300 clamp(1.25rem,5.2vw,3.85rem)/1 "Montserrat",Arial,sans-serif;letter-spacing:clamp(.32em,1.35vw,.48em);opacity:0;transform:translateY(8px);animation:xgSub .9s ease 1.45s forwards}
+    .xclusivo-glitch-scan{position:absolute;inset:0;pointer-events:none;opacity:0;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(255,255,255,.035) 4px,transparent 5px);animation:xgScan 1.2s linear .7s 2}
+    .xclusivo-glitch-flash{position:absolute;inset:0;pointer-events:none;background:#fff;opacity:0;animation:xgFlash .16s ease 1.12s}
+    body.xclusivo-intro-active{overflow:hidden}
+    @keyframes xgWordIn{0%{opacity:0;filter:blur(8px);transform:scale(1.035)}100%{opacity:1;filter:blur(0);transform:scale(1)}}
+    @keyframes xgBefore{0%,100%{opacity:0;transform:translateX(0)}20%,65%{opacity:.7;transform:translateX(-5px)}45%{transform:translateX(4px)}}
+    @keyframes xgAfter{0%,100%{opacity:0;transform:translateX(0)}25%,70%{opacity:.65;transform:translateX(5px)}50%{transform:translateX(-4px)}}
+    @keyframes xgSub{to{opacity:1;transform:translateY(0)}}
+    @keyframes xgScan{0%{opacity:0;transform:translateY(-15%)}20%{opacity:.35}100%{opacity:0;transform:translateY(15%)}}
+    @keyframes xgFlash{0%{opacity:0}35%{opacity:.12}100%{opacity:0}}
+    @media(max-width:480px){.xclusivo-glitch-word{font-size:12vw;letter-spacing:.075em}.xclusivo-glitch-sub{font-size:5.5vw}}
+    @media(prefers-reduced-motion:reduce){.xclusivo-intro,.xclusivo-intro *{animation-duration:.01ms!important;animation-delay:0ms!important}.xclusivo-glitch-word,.xclusivo-glitch-sub{opacity:1;transform:none;filter:none}}
+
+  </style><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;800&display=swap" rel="stylesheet"/></head><body class="xclusivo-intro-active">
+  <div class="xclusivo-intro" id="xclusivoIntro" role="status" aria-label="Xclusivo Studio">
+    <div class="xclusivo-intro-logo">
+      <div class="xclusivo-glitch-word" data-text="XCLUSIVO">XCLUSIVO</div>
+      <div class="xclusivo-glitch-sub">STUDIO</div>
+    </div>
+    <div class="xclusivo-glitch-scan"></div>
+    <div class="xclusivo-glitch-flash"></div>
+  </div>
+<header class="header">
 <nav aria-label="Main navigation" class="nav container">
 <a aria-label="Xclusivo Studio home" class="brand" href="index.html">XCLUSIVO<small>STUDIO</small></a>
 <button aria-controls="navLinks" aria-expanded="false" aria-label="Open navigation menu" class="menu-toggle" id="menuToggle">MENU</button>
@@ -479,4 +510,19 @@
         }, { passive: true });
       }
     })();
-  </script></body></html>
+  </script>
+  <script>
+    // Intro 03: digital glitch logo, then reveal the existing homepage.
+    (() => {
+      const intro = document.getElementById("xclusivoIntro");
+      if (!intro) return;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.setTimeout(() => {
+        intro.classList.add("is-leaving");
+        document.body.classList.remove("xclusivo-intro-active");
+        window.setTimeout(() => intro.remove(), 850);
+      }, reduced ? 350 : 3400);
+    })();
+  </script>
+
+</body></html>
